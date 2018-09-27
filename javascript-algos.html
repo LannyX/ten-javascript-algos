@@ -1,7 +1,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
 <h3>
     Messages App
-    <button onclick="clearMessages()">
+    <button id = "myButton" onclick="clearMessages()">
         Clear Messages
     </button>
 </h3>
@@ -57,10 +57,20 @@
         messagesContainer.style['float'] = 'left';
         document.body.appendChild(messagesContainer);
     }
-
+	var isClicked = false;
     function clearMessages() {
         /*TODO CLEAR MESSAGES FROM DOCUMENT WHEN USER CLICKS THE [CLEAR MESSAGES] BUTTON */
         /* EXTRA CREDIT INCLUDE A SCRIPT TAG THATS FETCHES BOOTSTRAP CSS STLYINGS AND STYLE THE BUTTONS */
+        
+        isClicked = !isClicked;
+        var rootDiv = document.getElementById('messagesContainer');
+        var button = document.getElementById('myButton');
+        button.style.background = (isClicked  == true) ? "rgba(255,255,102,0.8)" : "rgba(255,0,0,0)";
+        if (rootDiv) {
+            while (rootDiv.hasChildNodes()) {
+                rootDiv.removeChild(rootDiv.lastChild);
+            }
+        }
     }
 
     function addPlainMessage() {
@@ -82,8 +92,8 @@
         handleSpan.appendChild(handleText);
         // TODO:: EXCLUDING THE ORIGINALLY TYPED USER NAME REPLACE THIS TEXT \
         //        WITH ANY ADDITIONAL USER TEXT FROM THE ORIGIN USER TEXT MESSAGE
-        var dummyText = 'TODO:: EXCLUDING THE ORIGINALLY TYPED USER NAME REPLACE THIS TEXT \
-                         WITH ANY ADDITIONAL USER TEXT FROM THE ORIGIN USER TEXT MESSAGE';
+        var myString = getUserText();
+        var dummyText = " " + myString.substr(myString.indexOf(" ") + 1);
         var messageText = document.createTextNode(`${dummyText} `);
         messageDiv.appendChild(handleSpan);
         messageDiv.appendChild(messageText);
@@ -94,7 +104,7 @@
     }
     
     //TODO SET THE FLAG TO FALS ONCE YOU UNDERSTAND THE ASSIGNMENT
-    const instructionsFlag = true;
+    const instructionsFlag = false;
     if (instructionsFlag) {
         console.log(`README`);
         console.log(`
@@ -107,7 +117,6 @@
         `);
     }
     
-
     /* TODO ADD ADDITONALY 
        OBJECTS LIKE THE ONES BELOW, MINIMUM OF TEN.  
        EACH MUST CONTAIN A FIRST AND LAST NAME AND HANDLE */
@@ -131,6 +140,61 @@
             firstName: 'Horace',
             lastName: 'Grant',
             handle: '@HGrant'
+        },
+        {
+            firstName: 'Steph',
+            lastName: 'Curry',
+            handle: '@SCurry'
+        },
+        {
+            firstName: 'Klay',
+            lastName: 'Thompson',
+            handle: '@KThompson'
+        },
+        {
+            firstName: 'Kevin',
+            lastName: 'Durant',
+            handle: '@KDurant'
+        },
+        {
+            firstName: 'Draymond',
+            lastName: 'Green',
+            handle: '@DGreen'
+        },
+        {
+            firstName: 'David',
+            lastName: 'West',
+            handle: '@DWest'
+        },
+        {
+            firstName: 'Shawn',
+            lastName: 'Livingston',
+            handle: '@SLivingston'
+        },
+        {
+            firstName: 'Kevin',
+            lastName: 'Looney',
+            handle: '@KLooney'
+        },
+        {
+            firstName: 'Pat',
+            lastName: 'McCaw',
+            handle: '@PMcCaw'
+        },
+        {
+            firstName: 'DeMarcus',
+            lastName: 'Cousins',
+            handle: '@DCousins'
+        },       
+        {
+            firstName: 'David',
+            lastName: 'Lee',
+            handle: '@DLee'
+        },
+        {
+            firstName: 'Jordan',
+            lastName: 'Bell',
+            handle: '@JBell'
         }
     ];
 
@@ -146,12 +210,45 @@
         }
     }
 
-    function initConstantTimeNameFileter() {
+    function initConstantTimeNameFileter(filteredNames) {
         /* EXTRA CREDIT */
+        clearNames();
+        var rootDiv = document.createElement('div');
+        rootDiv.id = 'filteredNamesContainer';
+        var namesContainer = document.createElement('div');
+        filteredNames.map( (name) => {
+            var nameElm = document.createElement('button');
+            nameElm.style['background-color'] = 'dodgerblue';
+            nameElm.style['cursor'] = 'pointer';
+            nameElm.setAttribute('class', 'filtered-name');
+            var text = document.createTextNode(`${name.firstName} ${name.lastName}`);
+            nameElm.appendChild(text);
+            namesContainer.appendChild(nameElm);
+            nameElm.addEventListener('click', function(){
+            	addHandleMessage(`${name.handle}`);
+            });
+        });
+        document.body.appendChild(namesContainer);
     }
     function constantTimeNameFilter(userText) {
         /* EXTRA CREDIT :: CONVERT filterNames FUNCTION TO DO CONSTANT TIME LOOK UP.  
         THIS WILL REQUIRE initConstantTimeNameFileter ON PAGE LOAD AS WELL */
+        const firstThreeChars = userText.toLowerCase().slice(1,4);
+        var re = new RegExp(firstThreeChars, 'g');
+        console.log(`First three characters: ${firstThreeChars} `);
+        console.log(`First three characters: ${firstThreeChars} `);
+        const filteredNames = [];
+        userNames.map( (userName) => {
+            const fullname = `${userName.firstName.toLowerCase()} ${userName.lastName.toLowerCase()}`;
+            var isMatch = !!userName.firstName.toLowerCase().match(re) || !!userName.lastName.toLowerCase().match(re);
+            console.log(`Fullname: ${fullname}` );
+            console.log(isMatch);
+            //console.log(`Fullname: ${fullname}` );
+            if (isMatch) {
+                filteredNames.push(userName);
+            }
+        });
+        return filteredNames;
     }
 
     function filterNames(userText) {
@@ -165,7 +262,7 @@
             var isMatch = !!userName.firstName.toLowerCase().match(re) || !!userName.lastName.toLowerCase().match(re);
             console.log(`Fullname: ${fullname}` );
             console.log(isMatch);
-            console.log(`Fullname: ${fullname}` );
+            //console.log(`Fullname: ${fullname}` );
             if (isMatch) {
                 filteredNames.push(userName);
             }
@@ -186,7 +283,7 @@
             var text = document.createTextNode(`${name.firstName} ${name.lastName}`);
             nameElm.appendChild(text);
             namesContainer.appendChild(nameElm);
-            
+
             /* 
                 TODO :: ADD CLICK EVENT LISTENER [addEventListener] TO EACH NAME ELEMENT.
                 IF THE USER CLICKS ON A FILTERED NAME THEN THEN A MESSAGE IS OUTPUT
@@ -204,10 +301,9 @@
                 EXAMPLE: @chandler => @CGegg
             */
 
-            //TODO WRAP THIS FUNCTION WITH EVENT LISTENER AND UNCOMMENT IT
-            //TODO REPLACE [myHandle] WITH THE USERS CORRECT HANDLE
-            // addHandleMessage('myHandle'); 
-
+            nameElm.addEventListener('click', function(){
+            	addHandleMessage(`${name.handle}`);
+            });
         });
         document.body.appendChild(namesContainer);
     }
@@ -237,8 +333,10 @@
         const firstChar = userText[0] || '';
         if (firstChar === '@') {
             console.log('filter names ...');
-            const filteredNames = filterNames(userText);
-            initFilteredNames(filteredNames);
+            //const filteredNames = filterNames(userText);
+            const filteredNames = constantTimeNameFilter(userText);
+            initConstantTimeNameFileter(filteredNames);
+            //initFilteredNames(filteredNames);
         } else {
             console.log('MISSING @ IN USER TEXT');
         }
@@ -249,7 +347,7 @@
             'input',
             debounce(
                 searchNames,
-                20000
+                2300
             )
         );
         initDocument();
